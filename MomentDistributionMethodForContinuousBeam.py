@@ -19,7 +19,7 @@ CL = [-100, 0, 0]
 SP = ['pin', 'fix']
 
 # ================================= Tolerance ==========================
-Tol = 0.01
+Tol = 0.1
 
 # ======================================================== BEGIN COMPUTATION ===================================
 
@@ -165,8 +165,22 @@ class Analysis:
             Element.instances[i].AddCO()
 
         # =======================================
+        COMoment = 0
+        for i in range(0, EleNumber):
+            if len(Element.instances[i].CO1) > 0:
+                temp = Element.instances[i].CO1[-1]
+                if abs(temp) > COMoment:
+                    COMoment = temp
+            if len(Element.instances[i].CO2) > 0:
+                temp = Element.instances[i].CO2[-1]
+                if abs(temp) > COMoment:
+                    COMoment = temp
 
-        for cycles in range(0, 2):
+        print("RE = %f" % COMoment)
+        iternum = 0
+
+        while abs(COMoment) > Tol:
+            iternum += 1
             for i in range(0, EleNumber - 1):
                 Ele1 = Element.instances[i]
                 Ele2 = Element.instances[i + 1]
@@ -182,6 +196,18 @@ class Analysis:
 
             for i in range(0, EleNumber):
                 Element.instances[i].AddCO()
+
+            COMoment = 0
+            for i in range(0, EleNumber):
+                if len(Element.instances[i].CO1) > 0:
+                    temp = Element.instances[i].CO1[-1]
+                    if abs(temp) > COMoment:
+                        COMoment = temp
+                if len(Element.instances[i].CO2) > 0:
+                    temp = Element.instances[i].CO2[-1]
+                    if abs(temp) > COMoment:
+                        COMoment = temp
+            print("RE = %f" % COMoment)
 
         # ======================================
 
@@ -233,4 +259,6 @@ class Analysis:
         print('CO')
         for i in range(0, EleNumber):
             print(Element.instances[i].CO1, Element.instances[i].CO2)
+
+        print("Iteration Number = %d" % iternum)
 Analysis()
