@@ -33,7 +33,9 @@ class Matrix:
 
 class StrainRossette:
   def __init__(self, StrainX, StrainS, StrainY, E, v):
-    # StrainS should be in 45 degree direction
+    # StrainX: A list of horizontal strains
+    # StrainY: A list of vertical strains
+    # StrainS: A list of strains in 45 degree direction
     # E is Young's Modulus
     # v is Poisson's Ratio
     length1 = len(StrainX)
@@ -103,7 +105,7 @@ Result = StrainRossette(Px, Py, Angle, 205e-3, 0.3)
 
 File = open('/media/chenting/Work/ProgramCode/StrainRossette/SX1-1StrainGuagesResult.txt', 'w')
 for i in range(0, n):
-  File.write('%f %f %f %f\n' % (Result.Px[i], Result.Py[i], Result.Angle[i], Result.VMStrain[i]))
+  File.write('%f %f %f %f\n' % (Result.Px[i], Result.Py[i], Result.Angle[i], Result.VMStress[i]))
 
 print('2nd')
 r2 = StrainRossette([97], [455], [-122], 205e-3, 0.3)

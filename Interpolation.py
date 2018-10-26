@@ -47,7 +47,7 @@ print(zz)'''
 '''yi = LinearInterpolation3D(0, 0, 0, 1, 0, 1, 0, 1, 2, 0.5, 0.5)
 print(yi)'''
 
-y1 = LinearInterpolation2D(56326.3, 1.070235, 60366.4, 1.076009, 60000)
+y1 = LinearInterpolation2D(1.1, 0.066, 1.2, 0.074, 7.4/6.6)
 print(y1)
 
 #yi = LinearInterpolation2D(88843.4, 1.072411, 93073.1, 1.080109, 1.10634898685)
