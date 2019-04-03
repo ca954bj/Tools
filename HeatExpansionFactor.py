@@ -17,6 +17,6 @@ class ExpansionFactor:
 
 # Usage
 #alpha = ExpansionFactor(18, 80, 1, 1000, 205000).alpha
-alpha = ExpansionFactor(10, 16, 1, 156000, 205000).alpha
+alpha = ExpansionFactor(6, 12, 1, 50000, 210000).alpha
 print(alpha)
 
