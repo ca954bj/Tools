@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # ================================== Input File ===========================================
-InpFile = "C:\\temp\\Specimen-SX1Newfo.inp"
-NewInpFile = "C:\\temp\\Specimen-SX1Newf.inp"
+InpFile = "/media/chenting/Work/ProgramCode/AbaqusInpScript2/Specimen-SX2-2o.inp"
+NewInpFile = "/media/chenting/Work/ProgramCode/AbaqusInpScript2/Specimen-SX2-2.inp"
 
 # ================================== Read File ===========================================
 file = open(InpFile, 'r')
@@ -320,6 +320,22 @@ for line in file:
         file2.write("*Spring, elset=ZSpring\n")
         file2.write("3, 3\n")
         file2.write("1e+07\n")
+        #file2.write("*Spring, elset=YSpringForRods\n")
+        #file2.write("2, 2\n")
+        #file2.write("1e+06\n")
+        #file2.write("*Spring, elset=ZSpringForRods\n")
+        #file2.write("3, 3\n")
+        #file2.write("1e+06\n")
+        file2.write("*Spring, NonLinear, elset=YSpringForRods\n")
+        file2.write("2, 2\n")
+        file2.write("-0.001, -10\n")
+        file2.write("0, 0\n")
+        file2.write("1e+06, 1\n")
+        file2.write("*Spring, NonLinear, elset=ZSpringForRods\n")
+        file2.write("3, 3\n")
+        file2.write("-0.001, -10\n")
+        file2.write("0, 0\n")
+        file2.write("1e+06, 1\n")
 
         # ========================= Processing Steel Rods ===========================================
         file2.write("** ================================ SteelRod 1 ==============================\n")
@@ -327,44 +343,68 @@ for line in file:
             for j, objj in enumerate(SteelRod1NodeSet):
                 if 12.4 < ((obji[1] - objj[1])**2 + (obji[2] - objj[2])**2 + (obji[3] - objj[3])**2)**0.5 < 12.6:
                     PairCounter += 1
-                    file2.write("*Element, type=Spring2, elset=YSpring\n")
-                    file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod1.name, objj[0], ConcreteCore.name, obji[0]))
+                    file2.write("*Element, type=Spring2, elset=YSpringForRods\n")
+                    if objj[2] <= obji[2]:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod1.name, objj[0], ConcreteCore.name, obji[0]))
+                    else:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, ConcreteCore.name, obji[0], SteelRod1.name, objj[0]))
                     PairCounter += 1
-                    file2.write("*Element, type=Spring2, elset=ZSpring\n")
-                    file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod1.name, objj[0], ConcreteCore.name, obji[0]))
+                    file2.write("*Element, type=Spring2, elset=ZSpringForRods\n")
+                    if objj[3] <= obji[3]:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod1.name, objj[0], ConcreteCore.name, obji[0]))
+                    else:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, ConcreteCore.name, obji[0], SteelRod1.name, objj[0]))
 
         file2.write("** ================================ SteelRod 2 ==============================\n")
         for i, obji in enumerate(ConcreteCoreNodeSet):
             for j, objj in enumerate(SteelRod2NodeSet):
                 if 12.4 < ((obji[1] - objj[1])**2 + (obji[2] - objj[2])**2 + (obji[3] - objj[3])**2)**0.5 < 12.6:
                     PairCounter += 1
-                    file2.write("*Element, type=Spring2, elset=YSpring\n")
-                    file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod2.name, objj[0], ConcreteCore.name, obji[0]))
+                    file2.write("*Element, type=Spring2, elset=YSpringForRods\n")
+                    if objj[2] <= obji[2]:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod2.name, objj[0], ConcreteCore.name, obji[0]))
+                    else:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, ConcreteCore.name, obji[0], SteelRod2.name, objj[0]))
                     PairCounter += 1
-                    file2.write("*Element, type=Spring2, elset=ZSpring\n")
-                    file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod2.name, objj[0], ConcreteCore.name, obji[0]))
+                    file2.write("*Element, type=Spring2, elset=ZSpringForRods\n")
+                    if objj[3] <= obji[3]:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod2.name, objj[0], ConcreteCore.name, obji[0]))
+                    else:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, ConcreteCore.name, obji[0], SteelRod2.name, objj[0]))
 
         file2.write("** ================================ SteelRod 3 ==============================\n")
         for i, obji in enumerate(ConcreteCoreNodeSet):
             for j, objj in enumerate(SteelRod3NodeSet):
                 if 12.4 < ((obji[1] - objj[1])**2 + (obji[2] - objj[2])**2 + (obji[3] - objj[3])**2)**0.5 < 12.6:
                     PairCounter += 1
-                    file2.write("*Element, type=Spring2, elset=YSpring\n")
-                    file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod3.name, objj[0], ConcreteCore.name, obji[0]))
+                    file2.write("*Element, type=Spring2, elset=YSpringForRods\n")
+                    if objj[2] <= obji[2]:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod3.name, objj[0], ConcreteCore.name, obji[0]))
+                    else:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, ConcreteCore.name, obji[0], SteelRod3.name, objj[0]))
                     PairCounter += 1
-                    file2.write("*Element, type=Spring2, elset=ZSpring\n")
-                    file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod3.name, objj[0], ConcreteCore.name, obji[0]))
+                    file2.write("*Element, type=Spring2, elset=ZSpringForRods\n")
+                    if objj[3] <= obji[3]:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod3.name, objj[0], ConcreteCore.name, obji[0]))
+                    else:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, ConcreteCore.name, obji[0], SteelRod3.name, objj[0]))
 
         file2.write("** ================================ SteelRod 4 ==============================\n")
         for i, obji in enumerate(ConcreteCoreNodeSet):
             for j, objj in enumerate(SteelRod4NodeSet):
                 if 12.4 < ((obji[1] - objj[1])**2 + (obji[2] - objj[2])**2 + (obji[3] - objj[3])**2)**0.5 < 12.6:
                     PairCounter += 1
-                    file2.write("*Element, type=Spring2, elset=YSpring\n")
-                    file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod4.name, objj[0], ConcreteCore.name, obji[0]))
+                    file2.write("*Element, type=Spring2, elset=YSpringForRods\n")
+                    if objj[2] <= obji[2]:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod4.name, objj[0], ConcreteCore.name, obji[0]))
+                    else:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, ConcreteCore.name, obji[0], SteelRod4.name, objj[0]))
                     PairCounter += 1
-                    file2.write("*Element, type=Spring2, elset=ZSpring\n")
-                    file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod4.name, objj[0], ConcreteCore.name, obji[0]))
+                    file2.write("*Element, type=Spring2, elset=ZSpringForRods\n")
+                    if objj[3] <= obji[3]:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, SteelRod4.name, objj[0], ConcreteCore.name, obji[0]))
+                    else:
+                        file2.write("%d, %s.%d, %s.%d\n" % (PairCounter, ConcreteCore.name, obji[0], SteelRod4.name, objj[0]))
 
         # ====================================== Fin Plates ==========================================
         def BoundFunction(x):
