@@ -1,15 +1,24 @@
 import math
 
 class ExpansionFactor:
-  def __init__(self, Radius, Length, TemperatureChange, Preload, E):
+  def __init__(self, Radius, Length, TemperatureChange, Preload, E, dw, Di, Ec):
     # Radius is the radius of the bolt
     # Length is the length of the bolt shank
     # TemperatureChange is the change of temperature in the predefined field
     # E is the Young's modulus of the bolt
-
+    # dw is the diameter of bolt head
+    # Di is the bolt hole diameter
+    # Ec is the Young's modulus of the plate
+    
+    lf = Length
     A = math.pi*Radius*Radius
-    dl = Preload*Length/(E*A)
-    self.alpha = dl/(Length*TemperatureChange)
+    Deq = dw + lf/10.0
+    Aeq = math.pi/4*(Deq*Deq - Di*Di)
+    kc = lf/(Ec*Aeq)
+    k = Length/(E*A) + 0.8*2*Radius/(E*A)
+    print(k,kc)
+    dl = -Preload*Length*(k + kc)/(A*E*(k - kc))
+    self.alpha = dl/(TemperatureChange*Length)
   def alpha(self):
     return self.alpha
 
@@ -17,6 +26,6 @@ class ExpansionFactor:
 
 # Usage
 #alpha = ExpansionFactor(18, 80, 1, 1000, 205000).alpha
-alpha = ExpansionFactor(6, 12, 1, 50000, 210000).alpha
+alpha = ExpansionFactor(6.0, 12.0, 1.0, 33929, 205000, 24.0, 14.0, 205000).alpha
 print(alpha)
 

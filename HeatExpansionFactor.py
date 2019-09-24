@@ -14,10 +14,12 @@ class ExpansionFactor:
     A = math.pi*Radius*Radius
     Deq = dw + lf/10.0
     Aeq = math.pi/4*(Deq*Deq - Di*Di)
-    kc = lf/(Ec*Aeq)
-    k = Length/(E*A)
+    kc = Ec*math.pi*(dw*dw/4-Di*Di/4)/Length
+    #kc = 0.1e1 / (math.log(dw + Di) - math.log(dw - Di) - math.log(Length + dw + Di) + math.log(Length - Di + dw)) * math.pi * E * Di / 2
+    k = E*A/Length
     dl = -Preload*Length*(k + kc)/(A*E*(k - kc))
     self.alpha = dl/(TemperatureChange*Length)
+    print(kc, k)
   def alpha(self):
     return self.alpha
 
