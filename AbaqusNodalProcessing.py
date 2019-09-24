@@ -1,7 +1,8 @@
 # A set of data must be in a horizontal line
 # The first line is a reference line
 # Other lines are data sets to be handled
-fn = ""
+fn = "PanelZoneStrainsSY1-1.txt"
+output = "RPanelZoneStrainsSY1-1.txt"
 
 # =================================================== Begin =============================================
 content = open(fn, 'r')
@@ -24,9 +25,10 @@ for line in content:
 			Data[linen].append(float(obj))
 
 linenlast = linen
+content.close()
 
 CurrentRef = Ref[0]
-Ref2 = Ref[0]
+Ref2.append(Ref[0])
 counter = 0
 for i, obj in enumerate(Ref):
 	if obj == CurrentRef:
@@ -40,7 +42,16 @@ for i, obj in enumerate(Ref):
 			Data2[j].append(0)
 			Data2[j][-1] = Data2[j][-1] + Data[j][i]
 		counter = 1
+		CurrentRef = obj
 		
-print(Data2)
+newf = open(output, 'w')
+for obj in Ref2:
+	newf.write("%f "%obj)
+newf.write("\n")
+for i in range(2, linenlast + 1):
+	for obj in Data2[i]:
+		newf.write("%f "%obj)
+	newf.write("\n")
+
 	
 
