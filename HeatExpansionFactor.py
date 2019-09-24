@@ -6,6 +6,9 @@ class ExpansionFactor:
     # Length is the length of the bolt shank
     # TemperatureChange is the change of temperature in the predefined field
     # E is the Young's modulus of the bolt
+    # dw is the diameter of bolt head
+    # Di is the bolt hole diameter
+    # Ec is the Young's modulus of the plate
     
     lf = Length
     A = math.pi*Radius*Radius
