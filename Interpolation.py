@@ -1,3 +1,9 @@
+status = "use"
+#status = "try"
+# choose "use" or "try"
+
+import copy
+
 def LinearInterpolation2D(x1, y1, x2, y2, xi, tol=0.01):
     if abs(x1 - xi) < tol:
         return y1
@@ -9,23 +15,45 @@ def LinearInterpolation2D(x1, y1, x2, y2, xi, tol=0.01):
         return yi
         
 def ListLinearInterpolation2D(xlist, ylist, xi, tol=0.01):
-    # xlist must be monotonic increasing
-	xlength = length(xlist)
-	ylength = length(ylist)
+    # xlist must be monotonic
+	xlength = len(xlist)
+	ylength = len(ylist)
+	if xlist[1] < xlist[0]:
+	    case = 1
+	else:
+	    case = 0
 	if xlength != ylength:
 		print("The lengths of xlist and ylist are not the same!")
 	else:
-	    if xi < xlist[0]:
-	        yi = LinearInterpolation2D(xlist[0], ylist[0], xlist[1], ylist[1], xi, tol)
-	    elif xi > xlist[-1]:
-	        yi = LinearInterpolation2D(xlist[-2], ylist[-2], xlist[-1], ylist[-1], xi, tol)
-	    else:
-	        for i in range(1, xlength):
-	            if xi >= xlist[i-1] and xi <= xlist[i]:
-	                yi = LinearInterpolation2D(xlist[i-1], ylist[i-1], xlist[i], ylist[i], xi, tol)
-	                break
+	    if xlist[1] >= xlist[0]:
+	        if xi < xlist[0]:
+	            yi = LinearInterpolation2D(xlist[0], ylist[0], xlist[1], ylist[1], xi, tol)
+	        elif xi > xlist[-1]:
+	            yi = LinearInterpolation2D(xlist[-2], ylist[-2], xlist[-1], ylist[-1], xi, tol)
+	        else:
+	            for i in range(1, xlength):
+	                if xi >= xlist[i-1] and xi <= xlist[i]:
+	                    yi = LinearInterpolation2D(xlist[i-1], ylist[i-1], xlist[i], ylist[i], xi, tol)
+	                    break
+	    if xlist[1] < xlist[0]:
+	        if xi > xlist[0]:
+	            yi = LinearInterpolation2D(xlist[0], ylist[0], xlist[1], ylist[1], xi, tol)
+	        elif xi < xlist[-1]:
+	            yi = LinearInterpolation2D(xlist[-2], ylist[-2], xlist[-1], ylist[-1], xi, tol)
+	        else:
+	            for i in range(1, xlength):
+	                if xi <= xlist[i-1] and xi >= xlist[i]:
+	                    yi = LinearInterpolation2D(xlist[i-1], ylist[i-1], xlist[i], ylist[i], xi, tol)
+	                    break
 	return yi
-	        
+	
+def List2ListLinearInterpolation2D(xlist, ylist, xilist, tol=0.01):
+	xilength = len(xilist)
+	yilist = []
+	for i, obj in enumerate(xilist):
+	    yi = ListLinearInterpolation2D(xlist, ylist, obj, tol)
+	    yilist.append(yi)
+	return yilist
 
 def IfColinear(x1, y1, x2, y2, x3, y3, tol=0.01):
     vector1 = [x2 - x1, y2 - y1]
@@ -63,11 +91,17 @@ print(zz)'''
 
 ### ==================== Have a try ================================
 
-'''yi = LinearInterpolation3D(0, 0, 0, 1, 0, 1, 0, 1, 2, 0.5, 0.5)
-print(yi)'''
+if status == "try":
+    '''yi = LinearInterpolation3D(0, 0, 0, 1, 0, 1, 0, 1, 2, 0.5, 0.5)
+    print(yi)'''
 
-y1 = LinearInterpolation2D(1.1, 0.066, 1.2, 0.074, 7.4/6.6)
-print(y1)
+    y1 = LinearInterpolation2D(1.1, 0.066, 1.2, 0.074, 7.4/6.6)
+    print(y1)
 
-#yi = LinearInterpolation2D(88843.4, 1.072411, 93073.1, 1.080109, 1.10634898685)
-#print(yi)
+    y1 = ListLinearInterpolation2D([0, 1, 2, 3, 4, 5], [0, 2, 4, 8, 20, 50], 4.233)
+    print(y1)
+
+    #yi = LinearInterpolation2D(88843.4, 1.072411, 93073.1, 1.080109, 1.10634898685)
+    #print(yi)
+    
+
