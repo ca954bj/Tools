@@ -1,8 +1,6 @@
 # This file is for footing design
 # Unit: m, N, Pa, kg, s
 
-import xlrd
-
 class Footing:
 	def __init__(self, Xc, Yc, DL, LL):
 		# Xc is the length of the base plate (in the direction related to bending)
@@ -25,8 +23,6 @@ class Footing:
 		# Ast is the area of steel bars
 		# fsy is the yield capacity of the steel bar
 		# fc is the compressive strength of the concrete
-		fsy = fsy * 1e6
-		fc = fc * 1e6
 
 		print("Soil Pressure:")
 		self.psoil = (1.2 * self.DL + 1.5 * self.LL)/(Xf*Yf)
@@ -117,53 +113,13 @@ class Footing:
 			
 		else:
 			print("Error: Insufficient Punching Shear Strength\n")
-			
-book = xlrd.open_workbook("FootingDesign.xlsx")
-first_sheet = book.sheet_by_index(0)
-cell = first_sheet.cell(0,1)
-Xc = float(cell.value)
-
-cell = first_sheet.cell(1,1)
-Yc = float(cell.value)
-
-cell = first_sheet.cell(2,1)
-if type(cell.value) != float and type(cell.value) != int:
-	cellx = first_sheet.cell(2,3)
-	DL = 0
-	LL = float(cellx.value)/1.5
-else:
-	DL = float(cell.value)
-
-	cell = first_sheet.cell(3,1)
-	LL = float(cell.value)
-
-cell = first_sheet.cell(5,1)
-D = float(cell.value)
-
-cell = first_sheet.cell(6,1)
-d = float(cell.value)
-
-cell = first_sheet.cell(7,1)
-Xf = float(cell.value)
-
-cell = first_sheet.cell(8,1)
-Yf = float(cell.value)
-
-cell = first_sheet.cell(9,1)
-Ast = float(cell.value)
-
-cell = first_sheet.cell(10,1)
-fsy = float(cell.value)
-
-cell = first_sheet.cell(11,1)
-fc = float(cell.value)
 
 #def __init__(self, Xc, Yc, DL, LL, psoil):
 # Xc is the length of the base plate (in the direction related to bending)
 # Yc is the width of the base plate(in the direction unrelated to bending)
 # DL is the dead load
 # LL is the live load
-Footing1 = Footing(Xc, Yc, DL, LL)
+Footing1 = Footing(0.2, 0.2, 0, 17.37e3/1.5)
 
 
 #def CheckBending(self, D, d, Xf, Yf, Ast, fsy, fc):
@@ -172,6 +128,6 @@ Footing1 = Footing(Xc, Yc, DL, LL)
 # Xf is the length of the footing (in the direction related to the bending)
 # Yf is the width of the footing (in the direction unrelated to the bending)
 # Ast is the area of steel bars
-# fsy is the yield capacity of the steel bar (MPa)
-# fc is the compressive strength of the concrete (MPa)
-Footing1.CheckBending(D, d, Xf, Yf, Ast, fsy, fc)
+# fsy is the yield capacity of the steel bar
+# fc is the compressive strength of the concrete
+Footing1.CheckBending(0.4, 0.328, 0.4, 0.4, 452.4e-6, 330.0e6, 32e6)
