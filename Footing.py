@@ -2,6 +2,7 @@
 # Unit: m, N, Pa, kg, s
 
 import xlrd
+import time
 
 class Footing:
 	def __init__(self, Xc, Yc, DL, LL):
@@ -55,21 +56,22 @@ class Footing:
 			print("Reinforcement Ratio is OK\n")
 			
 		# Checking Bending Capacity
-		Mu = 0.8 * Ast * fsy * d * (1 - p * fsy / (1.7 * fc))
+		Mu = 0.8 * Ast * fsy * d * (1 - p * fsy / (1.7 * fc))/1000
 		print("Bending Capacity:")
-		print("Mu = 0.8 * Ast * fsy * d * (1 - p * fsy / (1.7 * fc)) = 0.8 * %.3f * %.3f * %.3f * (1 - %.3f * %.3f / (1.7 * %.3f)) = %.3f\n" % (Ast, fsy, d, p, fsy, fc, Mu))
+		print("Mu = 0.8 * Ast * fsy * d * (1 - p * fsy / (1.7 * fc)) = 0.8 * %.3f * %.3f * %.3f * (1 - %.3f * %.3f / (1.7 * %.3f)) = %.3f kN*m\n" % (Ast, fsy, d, p, fsy, fc, Mu))
 		
 		# Design Moment
-		M = self.psoil * Yf * (float(Xf - self.Xc)/2)**2 / 2
+		M = self.psoil * Yf * (float(Xf - self.Xc)/2)**2 / 2000
 		print("Design Moment:")
-		print("M = psoil * Yf * ((Xf - Xc)/2)**2 / 2 = %.3f * %.3f * ((%.3f - %.3f)/2)**2 / 2 = %f\n" % (self.psoil, Yf, Xf, self.Xc, M))
+		print("M = psoil * Yf * ((Xf - Xc)/2)**2 / 2 = %.3f * %.3f * ((%.3f - %.3f)/2)**2 / 2 = %f kN*m\n" % (self.psoil, Yf, Xf, self.Xc, M))
 		
 		# Compare between design moment and bending capacity
 		if Mu < M:
 			print("Error: Your design moment is less than bending capacity\n")
 		else:
 			print("Bending Check: Pass\n")
-			
+
+		print("======================================\n")
 		# Checking Shear Failure
 		print("Checking for Shear Failure ...\n")
 		
@@ -83,12 +85,12 @@ class Footing:
 		# Shear Capacity
 		Vuc = 0.7 * beta1 * b * d * 1e3 * (Ast * fc / (b * d * 1e6))**(1.0/3)
 		print("Shear Capacity:")
-		print("Vuc = 0.7 * beta1 * b * d * (Ast * fc / (b * d))**(1.0/3) = 0.7 * %.3f * %.3f * %.3f * (%.3f * %.3f / (%.3f * %.3f))**(1.0/3) = %f\n" % (beta1, b*1e3, d*1e3, Ast*1e6, fc/1e6, b*1e3, d*1e3, Vuc))
+		print("Vuc = 0.7 * beta1 * b * d * (Ast * fc / (b * d))**(1.0/3) = 0.7 * %.3f * %.3f * %.3f * (%.3f * %.3f / (%.3f * %.3f))**(1.0/3) = %f kN\n" % (beta1, b*1e3, d*1e3, Ast*1e6, fc/1e6, b*1e3, d*1e3, Vuc))
 		
 		# Design Shear
-		V = self.psoil * Yf * ((Xf - self.Xc) / 2 - d)
+		V = self.psoil * Yf * ((Xf - self.Xc) / 2 - d) / 1000
 		print("Design Shear:")
-		print("V = q * Yf * ((Xf - Xc) / 2 - d) = %.3f * %.3f * ((%.3f - %.3f) / 2 - %.3f) = %f\n" % (self.psoil, Yf, Xf, self.Xc, d, V))
+		print("V = q * Yf * ((Xf - Xc) / 2 - d) = %.3f * %.3f * ((%.3f - %.3f) / 2 - %.3f) = %f kN\n" % (self.psoil, Yf, Xf, self.Xc, d, V))
 		
 		# Compare between design shear and shear capacity
 		if V < 0.5*Vuc and D < 0.75:
@@ -97,19 +99,21 @@ class Footing:
 			print("Warning: Insufficient shear strength, ligs are required!\n")
 			
 		# Checking Punching Shear Failure
+
+		print("======================================\n")
 		
 		print("Checking for Shear Failure ...\n")
 		
 		# Punching Shear Capacity
 		print("Punching Shear Capacity:")
 		u = 2*(self.Xc + d) + 2*(self.Yc + d)
-		Vuo = 0.7 * u * d * 0.34 * fc**0.5 * 1000
+		Vuo = 0.7 * u * d * 0.34 * (fc/1e6)**0.5*1000
 		print("u = 2*(Xc + d) + 2*(Yc + d) = 2*(%.3f + %.3f) + 2*(%.3f + %.3f) = %f" % (self.Xc, d, self.Yc, d, u))
-		print("Vuo = 0.7 * u * d * 0.34 * fc**0.5 = 0.7 * %.3f * %.3f * 0.34 * %.3f**0.5 = %f\n" % (u, d, fc, Vuo))
+		print("Vuo = 0.7 * u * d * 0.34 * fc**0.5 = 0.7 * %.3f * %.3f * 0.34 * %.3f**0.5 = %f kN\n" % (u, d, fc/1e6, Vuo))
 		
 		print("Design Punching Shear:")	
-		V = self.psoil*(Xf*Yf) - self.psoil*(self.Xc + d)*(self.Yc + d)
-		print("V = q*(Xf*Yf) - q*(Xc + d)*(Yc + d) = %.3f*(%.3f*%.3f) - %.3f*(%.3f + %.3f)*(%.3f + %.3f) = %f\n" % (self.psoil, Xf, Yf, self.psoil, self.Xc, d, self.Yc, d, V))
+		V = (self.psoil*(Xf*Yf) - self.psoil*(self.Xc + d)*(self.Yc + d))/1000
+		print("V = q*(Xf*Yf) - q*(Xc + d)*(Yc + d) = %.3f*(%.3f*%.3f) - %.3f*(%.3f + %.3f)*(%.3f + %.3f) = %f kN\n" % (self.psoil, Xf, Yf, self.psoil, self.Xc, d, self.Yc, d, V))
 		
 		# Compare
 		if V < Vuo:
@@ -175,3 +179,4 @@ Footing1 = Footing(Xc, Yc, DL, LL)
 # fsy is the yield capacity of the steel bar (MPa)
 # fc is the compressive strength of the concrete (MPa)
 Footing1.CheckBending(D, d, Xf, Yf, Ast, fsy, fc)
+time.sleep(420)
