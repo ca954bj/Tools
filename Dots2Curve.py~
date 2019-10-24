@@ -1,0 +1,22 @@
+from sympy import *
+
+def curvify(xlist, ylist):
+	length1 = len(xlist)
+	length2 = len(ylist)
+	if length1 != length2:
+		print("In curvify, input error")
+		return 0
+	else:
+		a = symbols('a0:%d' % length1 - 1)
+		b = symbols('b0:%d' % length1 - 1)
+		c = symbols('c0:%d' % length1 - 1)
+		eqlist = []
+		for i in range(0, length1 - 1):
+			eq = a[i]*xlist[i]*xlist[i] + b[i]*xlist[i] + c[i] - ylist[i]
+			eqlist.append(eq)
+			eq = a[i]*xlist[i+1]*xlist[i+1] + b[i]*xlist[i+1] + c[i] - ylist[i+1]
+			eqlist.append(eq)
+		
+		for i in range(1, length1 - 1):
+			eq = 2*a[i]*xlist[i] + b[i] - 2*a[i-1]*xlist[i] - b[i-1]
+			eqlist.append(eq)
