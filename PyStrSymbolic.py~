@@ -210,20 +210,20 @@ class doubleinverse:
 			MB = A[0: size1, size1:]
 			MC = A[size1:, 0:size1]
 			MAI = MA.inv()
-			#print(MAI)
-			#print("DoubleInverse: 1 out of 4")
+			print(MAI)
+			print("DoubleInverse: 1 out of 4")
 			MDI = MD.inv()
-			#print(MDI)
-			#print("DoubleInverse: 2 out of 4")
+			print(MDI)
+			print("DoubleInverse: 2 out of 4")
 			M1 = simplify((MA-MB*MDI*MC))
 			M1I = M1.inv()
-			#print(M1I)
-			#print("DoubleInverse: 3 out of 4")
+			print(M1I)
+			print("DoubleInverse: 3 out of 4")
 			M2 = simplify(MD-MC*MAI*MB)
 			print(M2)
 			M2I = M2.inv(method='LU', try_block_diag=True)
-			#print(M2I)
-			#print("DoubleInverse: 4 out of 4")
+			print(M2I)
+			print("DoubleInverse: 4 out of 4")
 			A[0: size1, 0: size1] = M1I
 			A[0: size1, size1:] = -MAI*MB*M2I
 			A[size1:, 0:size1] = -MDI*MC*M1I
@@ -353,8 +353,8 @@ class Analyze:
 			MatrixD = MatrixD[sco:, sco:]
 			print("DShape", MatrixD.shape)
 			sco = detectzeros(MatrixD).scope
-		#for i in range(0, MatrixD.shape[0]):
-			#print(MatrixD[i, 0:])
+		for i in range(0, MatrixD.shape[0]):
+			print(MatrixD[i, 0:])
 		doubleinverse(MatrixD)
 		self.Kstiff[ljsco:, ljsco:] = MatrixD
 
@@ -363,8 +363,8 @@ class Analyze:
 		endtime = time.time()
 		print("Solving time %f seconds" % (endtime - starttime))
 
-		USolved = simplify(self.U1 + self.U2)
-		FSolved = simplify(self.F1 + self.F2)
+		USolved = self.U1 + self.U2
+		FSolved = self.F1 + self.F2
 		# USolved is displacements, FSolved is not reaction force !!!
 
 		# ============================ Post Processing ===================================
@@ -408,13 +408,12 @@ class Analyze:
 				if inf1 in LocEleFoc[i].free_symbols:
 					LocEleFoc[i] = limit(LocEleFoc[i], inf1, oo)
 			item.setpostlocforce(LocEleFoc[0], LocEleFoc[1], LocEleFoc[2], LocEleFoc[3], LocEleFoc[4], LocEleFoc[5])
-
-Fy, A, E, I, L = symbols('Fy A E I, L', positive=True, real=True)
-
+			
 N1 = node(1, 0, 0)
-N2 = node(2, L/2, 0)
-N3 = node(3, L, 0)
+N2 = node(2, 1, 0)
+N3 = node(3, 2, 0)
 
+Fy, A, E, I = symbols('Fy A E I')
 N1.defineimposeddisp(0, 0, 'free')
 N3.defineimposeddisp(0, 0, 'free')
 N2.defineload(0, -Fy, 0)
@@ -423,8 +422,3 @@ E1 = ElasticBeam(1, N1, N2, A, E, I, StartRelease=False, EndRelease=False)
 E2 = ElasticBeam(1, N2, N3, A, E, I, StartRelease=False, EndRelease=False)
 
 Analyze()
-
-for item in node.instances:
-	print(item.postdisp)
-	
-
