@@ -11,8 +11,8 @@ from sympy import *
 import time
 
 # ================================= Select Solver ==============================
-solver = "Sympy"
-#solver = "Giacpy"
+#solver = "Sympy"
+solver = "Giacpy"
 if solver == "Giacpy":
 	from giacpy import *
 
@@ -72,6 +72,7 @@ class ElasticBeam:
 	instances = []
 	Counter = 0
 	def __init__(self, n, node1, node2, A, E, I, StartRelease=False, EndRelease=False):
+		print(A, E, I)
 		self.n = n
 		self.node1 = node1
 		self.node2 = node2
@@ -90,10 +91,10 @@ class ElasticBeam:
 		
 		# ================ Setup Local Stiffness Matrix =======
 		
-		k1 = E*A/self.l
-		k2 = 12*E*I/(self.l**3)
-		k3 = 6*E*I/(self.l**2)
-		k4 = 4*E*I/self.l
+		k1 = self.E*self.A/self.l
+		k2 = 12*self.E*self.I/(self.l**3)
+		k3 = 6*self.E*self.I/(self.l**2)
+		k4 = 4*self.E*self.I/self.l
 		k5 = k4/2
 		
 		if self.release == [False, False]:
@@ -108,8 +109,8 @@ class ElasticBeam:
 
 		# ================ Setup Transformation Matrix ========
 		
-		cosa = VE[0]/self.l 
-		sina = VE[1]/self.l 
+		cosa = VE[0]/self.l
+		sina = VE[1]/self.l
 		T11 = Matrix([[cosa, sina, 0], [-sina, cosa, 0], [0, 0, 1]])
 		T12 = Matrix([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
 		temp1 = T11.row_join(T12)
@@ -220,7 +221,7 @@ class doubleinverse:
 			#print(M1I)
 			#print("DoubleInverse: 3 out of 4")
 			M2 = simplify(MD-MC*MAI*MB)
-			print(M2)
+			#print(M2)
 			M2I = M2.inv(method='LU', try_block_diag=True)
 			#print(M2I)
 			#print("DoubleInverse: 4 out of 4")
@@ -314,6 +315,7 @@ class Analyze:
 
 		# ================== Case 1: Only Apply Displacements to the structure ======================================
 		starttime = time.time()
+		print("Begin Solving")
 		self.U1 = zeros(size, 1)
 		for item in node.instances:
 			for i in range(0, 3):
@@ -409,18 +411,24 @@ class Analyze:
 					LocEleFoc[i] = limit(LocEleFoc[i], inf1, oo)
 			item.setpostlocforce(LocEleFoc[0], LocEleFoc[1], LocEleFoc[2], LocEleFoc[3], LocEleFoc[4], LocEleFoc[5])
 
-Fy, A, E, I, L = symbols('Fy A E I, L', positive=True, real=True)
+A1, E1, I1, A2, E2, I2, L1, L2 = symbols('A1 E1 I1 A2 E2 I2 L1 L2', positive=True, real=True)
+Fy = symbols('Fy', real=True)
 
 N1 = node(1, 0, 0)
-N2 = node(2, L/2, 0)
-N3 = node(3, L, 0)
+N2 = node(2, 0, L2)
+N3 = node(3, 0, 2*L2)
+N4 = node(4, -L1, L2)
+N5 = node(5, L1, L2)
 
 N1.defineimposeddisp(0, 0, 'free')
 N3.defineimposeddisp(0, 0, 'free')
-N2.defineload(0, -Fy, 0)
+N4.defineload(0, -Fy, 0)
+N5.defineload(0, Fy, 0)
 
-E1 = ElasticBeam(1, N1, N2, A, E, I, StartRelease=False, EndRelease=False)
-E2 = ElasticBeam(1, N2, N3, A, E, I, StartRelease=False, EndRelease=False)
+Element1 = ElasticBeam(1, N1, N2, A1, E1, I1, StartRelease=False, EndRelease=False)
+Element2 = ElasticBeam(2, N2, N3, A1, E1, I1, StartRelease=False, EndRelease=False)
+Element3 = ElasticBeam(3, N2, N4, A2, E2, I2, StartRelease=False, EndRelease=False)
+Element4 = ElasticBeam(4, N2, N5, A2, E2, I2, StartRelease=False, EndRelease=False)
 
 Analyze()
 
