@@ -1,0 +1,785 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[margin=2cm]{geometry}
+%\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{stanli}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,arrows,positioning}
+\usepackage{ifthen}
+\usepackage{adjustbox}
+\usepackage[gobble=auto]{pythontex}
+\usepackage[nameinlink]{cleveref}
+\usepackage{graphicx}
+\usepackage[absolute,overlay]{textpos}
+\graphicspath{ {./images/CIV3221/} }
+% Differential
+\newcommand*{\D}{\mathrm{d}}
+% scientific notation
+\providecommand{\e}[1]{\ensuremath{\times~10^{#1}}} 
+
+\begin{pycode}
+	import math
+	def n(num, sig=3):
+		f = '%.' + str(sig) + 'g' 
+		ret = f % num
+		if 'e' in ret:
+			ret = ret.replace('e', r'\e{')
+			ret += '}'
+		return ret
+	
+	def to_eng(num, sig=3):
+		try:
+			x = int(math.log10(num)//3)*3
+		except (ValueError, KeyError):
+			x = 0
+		if x != 0:
+			ret = str(n(num/10**x,sig)) + r' \times 10^{' + str(x) + '}'
+		else:
+			ret = str(n(num,sig))
+		return ret
+\end{pycode}
+
+% Commands for jinja2 templating
+% Instead of empty braces (i.e. no command effect), here we make the variable uppercase red
+% to emphasize in the template those variables to be replaced. Once rendered, this formatting
+% has not effect as jinja replaces the \VAR{variable} entirely.
+\usepackage{xcolor}
+\newcommand*{\VAR}[1]{\textcolor{red}{\textbf{#1}}}
+\newcommand*{\BLOCK}[1]{\textcolor{red}{\textbf{#1}}}
+
+\usepackage{comment}
+\newif\ifhidden
+% This defines whether to show the hidden content or not.
+\hiddenfalse 
+\ifhidden 	% if \ hiddentrue
+	\excludecomment{hidden}	% Exclude text within the "hidden" environment
+\else   	% \ hiddenfalse
+	\includecomment{hidden}		% Include text in the "hidden" environment
+\fi
+
+\title{Final assessment: CIV3221 Building structures and technology (Clayton and Sunway)\\
+\VAR{FullName} (\VAR{StudentID})}
+\date{Semester 2, 2020}
+\usepackage{times}
+\begin{document}
+\maketitle
+%\thispagestyle{fancy}
+
+\begin{introduction}	
+\noindent
+\textbf{Introduction}\\
+\noindent
+This exam is an open-book assessment. The answers provided to all questions must be submitted through Moodle. You are allowed to use computational aid (including calculators), and to refer to lecture notes or other materials (that must be properly cited and referenced in order to avoid plagiarism).\\
+\\ 
+\noindent
+Exam duration: 2 hours and 10 mins\\
+\noindent
+Scanning time: 30 mins\\
+
+\end{introduction}
+\begin{textblock*}{5cm}(8.9cm,28.49cm)
+Page
+\end{textblock*}
+\begin{textblock*}{5cm}(10.1cm,28.49cm)
+of 6
+\end{textblock*}
+%{\sf\tighttoc}
+\newpage
+\noindent
+\textbf{QUESTION 1 [5 marks]}\\
+Discuss and explain the key features and advantages of composite slabs and composite beams for construction of an office building.\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\noindent
+\textbf{QUESTION 2 [5 marks]}\\
+Explain how the strength and stiffness of beams and columns could affect the failure modes of a steel framing building subjected to seismic loading.\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+
+\begin{pycode}
+	from testscript import *
+	import random
+	import math
+	fn = open('read2.txt','r')
+	for content in fn:
+		iterator = int(content)
+	fn.close()
+	
+	def allocation(aa, b):
+		length = len(aa)
+		product = []
+		result = []
+		fullproduct = 1
+		for obj in aa:
+			fullproduct = fullproduct * obj
+		for i in range(1, length):
+			product.append(1)
+			for i in range(i, length):
+				product[-1] = product[-1] * aa[i]
+		r1= b%fullproduct
+		for i in range(1, length):
+			d1 = int(r1/product[i - 1])
+			r1 = r1%product[i - 1]
+			result.append(d1)
+		result.append(r1)
+		return result
+	
+	# ============================= Question 3 ============================
+	para3 = [3, 3, 2, 3, 3]
+	al3 = allocation(para3, iterator)
+		
+	select31 = al3[0]
+	select32 = al3[1]
+	select33 = al3[2]
+	select34 = al3[3]
+	select35 = al3[4]
+	MB_list = [40, 50, 60]
+	P_list = [10, 20, 30]
+	IAB_list = [2, 3]
+	LAB_list = [6, 7, 8]
+	LBC_list = [2, 3, 4]
+	
+	MB = MB_list[select31]
+	P = P_list[select32]
+	IAB = IAB_list[select33]
+	LAB = LAB_list[select34]
+	LBC = LBC_list[select35]
+	
+	# ============================= Question 4 ============================
+	para4_1 = [6, 3, 3, 8]
+	al4_1 = allocation(para4_1, iterator)
+	v41 = [3, 3.5, 4, 4.5, 5, 5.5]
+	v42 = [1, 2, 3]
+	v43 = [32, 35, 40]
+	v44 = [300, 400, 500, 600, 700, 800, 900, 1000]
+	
+	sv41 = v41[al4_1[0]]
+	sv42 = v42[al4_1[1]]
+	sv43 = v43[al4_1[2]]
+	sv44 = v44[al4_1[3]]
+	sv45 = 2480 - sv44
+	
+	# ============================= Question 5 ============================
+	para5_1 = [4, 6]
+	al5_1 = allocation(para5_1, iterator)
+	para5_2 = [5, 3]
+	al5_2 = allocation(para5_2, iterator)
+	v51 = [120, 125, 130, 135]
+	v52 = [7500, 7800, 8100, 8400, 8700, 9000]
+	v53 = [1, 1.5, 2, 2.5, 3]
+	v54 = [3, 4, 5]
+	
+	sv51 = v51[al5_1[0]]
+	sv52 = v52[al5_1[1]]
+	sv53 = v53[al5_2[0]]
+	sv54 = v54[al5_2[1]]
+	
+	# ============================= Question 6 ============================
+	para6_1 = [5, 5, 6]
+	al6_1 = allocation(para6_1, iterator)
+	v61 = [5000, 5500, 6000, 6500, 7000]
+	v62 = [3000, 3100, 3200, 3300, 3400]
+	v63 = [280, 300, 320, 350, 400, 420]
+	
+	sv61 = v61[al6_1[0]]
+	sv62 = v62[al6_1[1]]
+	sv63 = v63[al6_1[2]]
+	
+	para6_2 = [3, 3, 4, 3]
+	al6_2 = allocation(para6_2, iterator)
+	v64 = [400, 450, 500]
+	v65 = [80, 90, 100]
+	v66 = [0.7, 0.75, 0.8]
+	v67 = [0.8, 0.85, 0.9, 1]
+	v68 = [0.8, 0.85, 0.9, 1]
+	v69 = [1.7, 1.6, 1.8]
+	v610 = [0.702, 0.932, 0.754]
+	
+	sv64 = v64[al6_2[0]]
+	sv65 = v65[al6_2[0]]
+	sv66 = v66[al6_2[1]]
+	sv67 = v67[al6_2[2]]
+	sv68 = v68[al6_2[2]]
+	sv69 = v69[al6_2[3]]
+	sv610 = v610[al6_2[3]]
+	
+	# ============================= Question 7 ============================
+	para7 = [3, 3, 4, 4]
+	al7 = allocation(para7, iterator)
+	v71 = [400, 450, 500]
+	v72 = [380, 430, 480]
+	v73 = [1500, 1700, 1900, 2100]
+	v74 = [1500, 1700, 1900, 2100]
+	
+	sv71 = v71[al7[0]]
+	sv72 = v72[al7[1]]
+	sv73 = v73[al7[2]]
+	sv74 = v74[al7[3]]
+	
+	L_list = [3.5,3.75,4.0,4.25,4.5,4.75,5.0]  # m
+	M_list = [-80, -30, -50]	# kNm
+	I = 37.5e-6 	# m4
+	J = 75e-6   	# m4
+	E = 200     	# GPa
+	G = 80      	# GPa
+	
+	# Unit conversions MNm2
+	E *= 1e3
+	G *= 1e3
+	
+	L = random.choice(L_list) 		# Member length
+	M = random.choice(M_list) 		# y-axis moment load @ C
+	
+	grid = [L,I,J,E,G,M]
+	
+	EI_L = E*I/L
+	GJ_L = G*J/L
+	
+	# Call analysis
+	D = solve_D(grid)
+	theta_C, theta_D, theta_F = D
+	Fcd = eleF(eleK(grid),d_CD(D)*1e3)
+	Fce = eleF(eleK(grid),d_CE(D)*1e3)
+	Fcf = eleF(eleK(grid),d_CF(D)*1e3)
+	Fgc = eleF(eleK(grid),d_GC(D)*1e3)
+	Fcg = eleF(eleK(grid),d_CG(D)*1e3)
+	
+	bmd_scale=8
+	tmd_scale=5
+	
+	iterator = iterator + 1
+	fn = open('read2.txt','w')
+	fn.write('%d' % iterator)
+	fn.close()
+\end{pycode}
+
+\noindent
+\textbf{QUESTION 3 [10 marks]}\\
+For the continuous beam ABC shown in Figure 1, the following loads are applied:\\
+$\bullet$ external moment at point B, M\textsubscript{B} = $\py{n(MB)}$ kNm clockwise\\
+$\bullet$ point load at the midspan of BC, P = $\py{n(P)}$ kN\\
+$\bullet$ external moment at point C, M\textsubscript{C} = 20 kNm clockwise\\
+Point A is fixed, Support B is a roller and there is no support at C.\\
+Given: E = 200,000 MPa, I\textsubscript{AB} = $\py{IAB}$I\textsubscript{BC}, L\textsubscript{AB} = $\py{LAB}$ m, L\textsubscript{BC} = $\py{LBC}$ m\\
+\begin{figure}[ht]
+\includegraphics[width=9.53cm, height=4.37cm]{Figure1.png}\\
+\centering
+Figure 1\\
+\centering
+\end{figure}
+\\
+1) Using the moment distribution method, calculate the reactions at Supports A and B. \textbf{[5 marks]}
+\\
+\\
+\\
+2) Draw the bending moment diagram. \textbf{[5 marks]}
+\\
+\\
+\\
+\begin{textblock*}{5cm}(8.9cm,28.49cm)
+Page
+\end{textblock*}
+\begin{textblock*}{5cm}(10.1cm,28.49cm)
+of 6
+\end{textblock*}
+\newpage
+\noindent
+\textbf{QUESTION 4 [20 marks]}\\
+One span of a continuous composite slab in a composite floor structure of an office building is given in Figure 2. The overall thickness of composite slab is 125 mm. The live load is $\py{sv41}$ kPa. The dead load consists of the floor self-weight plus a super-imposed dead load of $\py{sv42}$ kPa. Take f'\textsubscript{c} = $\py{sv43}$ MPa, E\textsubscript{c} = 28000 MPa and unit weight of reinforced concrete = 25 kN/mm\textsuperscript{3}.\\
+\\
+1) Check if the ultimate bending capacity of the section is sufficient or not for the maximum design sagging moment. \textbf{[10 marks]}\\
+2) What is the bending moment capacity for the section A-A with a distance AA of $\py{sv44}$ mm to the support \textbf{\emph{A}}? \textbf{[5 marks]}\\
+3) What is the bending moment capacity for the section B-B with a distance BB of $\py{sv45}$ mm to the support \textbf{\emph{A}}? \textbf{[5 marks]}\\
+\begin{figure}[ht]
+\includegraphics[width=11.08cm, height=3.86cm]{Figure2.png}\\
+\centering
+Figure 2\\
+\centering
+\end{figure}
+\\
+\begin{textblock*}{5cm}(8.9cm,28.49cm)
+Page
+\end{textblock*}
+\begin{textblock*}{5cm}(10.1cm,28.49cm)
+of 6
+\end{textblock*}
+\newpage
+\noindent
+\textbf{QUESTION 5 [20 marks]}\\
+The layout of a composite floor is shown in Figure 3 below for building construction. Condeck HP metal sheeting (0.75 mm) is used in the composite slab with an overall depth of $\py{sv51}$ mm. 460 UB 67.1 is used as the support steel girder for the secondary composite beam (nominal depth =460 mm, A\textsubscript{s} = 8580 mm\textsuperscript{2}, f\textsubscript{sy} = 300 MPa).\\
+All secondary beams are simply supported with a span length L of $\py{sv52}$ mm. The dead load consists of the floor self-weight plus a super-imposed dead load of $\py{sv53}$ kPa. The live load is $\py{sv54}$ kPa. Take f'\textsubscript{c} = 32 MPa, E\textsubscript{c} = 28,000 MPa and unit weight of reinforced concrete = 25 kN/m\textsuperscript{3}.\\
+\\
+1) Calculate the number and spacing of welded shear studs that ensure complete shear connection. Use studs with d\textsubscript{bs} = 19 mm and f\textsubscript{uc} = 410 MPa. \textbf{[10 marks]}\\
+2) Check the serviceability limit state condition of one simply supported composite beam considering deflection limitation of L/250. \textbf{[10 marks]}\\
+\begin{figure}[ht]
+\includegraphics[width=9.776cm, height=9cm]{Figure3.png}\\
+\centering
+Figure 3\\
+\centering
+\end{figure}
+\begin{textblock*}{5cm}(8.9cm,28.49cm)
+Page
+\end{textblock*}
+\begin{textblock*}{5cm}(10.1cm,28.49cm)
+of 6
+\end{textblock*}
+\newpage
+\noindent
+\textbf{QUESTION 6 [30 marks]}\\
+A rigid-jointed steel frame structure is shown in Figure 4. Sufficient bracings are provided to avoid sway of the frame. Support A is a fix connection. Beam BG is rigidly connected to columns at both ends and does not have any rotational restraints. Beam BF is pin-connected to column BA, but rigidly connected to column at location F.\\
+Column AB and column BC are Universal Columns 310UC137 (in reference to BHP-300PLUS). Both columns have a length of $\py{sv61}$ mm. Beam FB is a Universal Beam 530UB92.5 (in reference to BHP-300PLUS). Both beams FB and BG have a length of $\py{sv62}$ mm. Beam BG is also a Universal Beam. \\
+\\
+Assume f\textsubscript{y}=$\py{sv63}$ MPa.\\
+E = Young’s modulus of elasticity = 200,000 MPa.\\
+G = shear modulus of elasticity = 80,000 MPa.\\
+Capacity factor \phi = 0.9\\
+$\alpha_b$ = 0, $k_f$ = 1\\
+\\
+Under certain loading combinations, the bending moment diagram for member AB is a straight line as shown in Figure 4 with M\textsubscript{1}=$\py{sv64}$ kNm and M\textsubscript{2}=$\py{sv65}$ kNm.\\
+\\
+1) To achieve an effective length factor for column AB not greater than $\py{sv66}$, what is the minimum size of beam BG? \textbf{[10 marks]}\\
+2) Assume full lateral restraint is provided to member AB and its effective length factor is $\py{sv67}$, what is the maximum allowed axial force in column AB if interaction formula for special I-section is adopted? \textbf{[10 marks]}\\
+3) If full lateral restraint is not provided to member AB, its column effective length factor is $\py{sv68}$, what is the maximum allowed axial force in column AB if general interaction formula is adopted? Given $\alpha_m$ = $\py{sv69}$, $\alpha_s$ = $\py{sv610}$. \textbf{[10 marks]}\\
+\begin{figure}[ht]
+\includegraphics[width=7.604cm, height=7cm]{Figure4.png}\\
+\centering
+Figure 4\\
+\centering
+\end{figure}
+\begin{textblock*}{5cm}(8.9cm,28.49cm)
+Page
+\end{textblock*}
+\begin{textblock*}{5cm}(10.1cm,28.49cm)
+of 6
+\end{textblock*}
+\newpage
+\noindent
+\textbf{QUESTION 7 [10 marks]}\\
+Assuming that a typical column rests on a rectangular footing through a X\textsubscript{c}$\times$Y\textsubscript{c} ($\py{sv71}$$\times$$\py{sv72}$) mm base plate, calculate the maximum design column load N* the footing can support in terms of wide beam shear. Assume planar dimensions of the footing to be X\textsubscript{b}$\times$Y\textsubscript{b} ($\py{sv73}$$\times$$\py{sv74}$) mm and its overall depth D = 500 mm with a cover concrete thickness of 75 mm. The concrete compressive strength f'\textsubscript{c} is 32 MPa and the steel reinforcements (f\textsubscript{y}=500 MPa) are placed as shown in Figure 5.\\
+\begin{figure}[ht]
+\includegraphics[width=8.94cm, height=8cm]{Figure5.png}\\
+{\centering Figure 5. Plan view of the footing for a single column (not to scale), with steel reinforcements 12$\times$N18 (diameter 18 mm) in each direction\par}\\
+\end{figure}
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\begin{figure}[ht]
+\centering{\textbf{End Exam}}\par\\
+\end{figure}
+\begin{textblock*}{5cm}(8.9cm,28.49cm)
+Page
+\end{textblock*}
+\begin{textblock*}{5cm}(10.1cm,28.49cm)
+of 6
+\end{textblock*}
+\begin{hidden}	
+\clearpage
+\section{Solution}
+
+\textbf{Step 1:} Define coordinate system. This is already provided in \Cref{fig:grid}. 
+
+\textbf{Step 2:} The unknown degrees of freedom are: 
+
+\begin{itemize}
+	\item Rotation about global y-axis at C ($\theta_C$)
+	\item Rotation about global y-axis at D ($\theta_D$)
+	\item Rotation about global y-axis at F ($\theta_F$)
+\end{itemize} 
+
+Due to symmetry of members CD and CF, and no applied point load, the degree of freedom for translation C is known: $\delta_C = 0$. Hence; 
+
+\begin{equation}
+	DOF = \left\{\theta_C,\theta_D,\theta_F\right\}
+\end{equation}
+
+\textbf{Step 3:} The known forces corresponding to the unknown DOF are: 
+
+\begin{equation}
+	F = \left\{ \py{n(M)},0,0 \right\} \textrm{\hspace{0.5cm} [kNm]}
+\end{equation}
+
+Note, the negative sign as per the direction of the double-headed arrow. 
+	
+\textbf{Step 4:} Apply $\theta_C$ positively only. 
+
+This causes bending along member DCF, and twisting along member ECG. 
+
+\textbf{Step 5:} Get forces at each DOF. 
+
+Moment in the direction of $\theta_C$ caused by $\theta_C$: 
+
+\begin{itemize}
+	\item In Element DC: $M_C = \left(\frac{4EI}{L}\right)\theta_C$
+	\item In Element CF: $M_C = \left(\frac{4EI}{L}\right)\theta_C$
+	\item In Element EC: $M_C = \left(\frac{GJ}{L}\right)\theta_C$
+	\item In Element CG: $M_C = \left(\frac{GJ}{L}\right)\theta_C$
+\end{itemize}	
+
+As all member properties are equal, then: 
+
+\begin{equation}
+	M_C = \frac{8EI+2GJ}{L}\theta_C
+\end{equation}
+
+Moment in the direction of $\theta_D$ caused by $\theta_C$: 
+
+\begin{itemize}
+	\item In Element DC: $M_D = \left(\frac{2EI}{L}\right)\theta_C$
+\end{itemize}	
+
+Moment in the direction of $\theta_F$ caused by $\theta_C$: 
+
+\begin{itemize}
+	\item In Element CF: $M_F = \left(\frac{2EI}{L}\right)\theta_C$
+\end{itemize}	
+
+\textbf{Step 6:} Repeat for each DOF
+
+Apply $\theta_D$ positively only and get forces at each DOF. 
+
+Moment in the direction of $\theta_C$ caused by $\theta_D$: 
+
+\begin{itemize}
+	\item In Element DC: $M_C = \left(\frac{2EI}{L}\right)\theta_D$
+\end{itemize}	
+
+Moment in the direction of $\theta_D$ caused by $\theta_D$: 
+
+\begin{itemize}
+	\item In Element DC: $M_D = \left(\frac{4EI}{L}\right)\theta_D$
+\end{itemize}	
+
+Moment in the direction of $\theta_F$ caused by $\theta_D$ is equal to zero ($M_F = 0$) as there is no rotation (C is locked).
+
+Apply $\theta_F$ positively only and get forces at each DOF. 
+
+Moment in the direction of $\theta_C$ caused by $\theta_F$: 
+
+\begin{itemize}
+	\item In Element DC: $M_C = \left(\frac{2EI}{L}\right)\theta_F$
+\end{itemize}	
+
+Moment in the direction of $\theta_D$ caused by $\theta_F$ is equal to zero ($M_D = 0$) as there is no rotation (C is locked).		
+
+Moment in the direction of $\theta_F$ caused by $\theta_F$: 
+
+\begin{itemize}
+	\item In Element DC: $M_F = \left(\frac{4EI}{L}\right)\theta_F$
+\end{itemize}			
+		
+\textbf{Step 7:} Add nodal forces
+
+Total moment in the direction of $\theta_C$: 
+
+\begin{equation}
+	M_C = \frac{8EI+2GJ}{L}\theta_C +  \left(\frac{2EI}{L}\right)\theta_D + \left(\frac{2EI}{L}\right)\theta_F  
+\end{equation}
+
+Total moment in the direction of $\theta_D$: 
+
+\begin{equation}
+	M_D = \left(\frac{2EI}{L}\right)\theta_C + \left(\frac{4EI}{L}\right)\theta_D + 0  
+\end{equation}
+
+Total moment in the direction of $\theta_F$:
+
+\begin{equation}
+	M_F = \left(\frac{2EI}{L}\right)\theta_C + 0 \left(\frac{4EI}{L}\right)\theta_F  
+\end{equation}
+
+Given: 
+
+\begin{equation}
+\frac{EI}{L} = \frac{ \left( \py{to_eng(E)} \right)\left(\py{to_eng(I)}\right) }
+					{ \left(\py{to_eng(L)}\right) } \times 10^{-3}
+				=\py{to_eng(EI_L*1e3)}~\mathrm{kNm}
+\end{equation}
+
+
+\begin{equation}
+\frac{GJ}{L} = \frac{ \left( \py{to_eng(G)} \right)\left(\py{to_eng(J)}\right) }
+					{ \left(\py{to_eng(L)}\right) } \times 10^{-3}
+				=\py{to_eng(GJ_L*1e3)}~\mathrm{kNm}
+\end{equation}
+
+The resulting structural stiffness matrix becomes: 
+
+\begin{equation}
+	K = 10^3 \py{m2ltx(sysK(grid))}
+\end{equation}
+
+Notice, it is symmetrical, giving confidence we have done it correctly.  
+
+\textbf{Step 8:} Solve, using Rule of Sarrus and Cramer's Rule to find:
+	
+\begin{align*}
+	\begin{Bmatrix}
+		\theta_C \\ \theta_D \\ \theta_F
+	\end{Bmatrix} 
+	&= 10^{-3} 
+	{\py{m2ltx(sysK(grid))}}^{-1}
+	\py{m2ltx(getF(grid),style='Bmatrix')} \\
+	&= \frac{10^{-3}}{\py{to_eng(det_K(sysK(grid)))}} \py{m2ltx(inv_K(sysK(grid))*det_K(sysK(grid)))}
+	\py{m2ltx(getF(grid),style='Bmatrix')} \\
+\end{align*}
+from which:
+\begin{equation}
+	\begin{Bmatrix}
+		\theta_C \\ \theta_D \\ \theta_F
+	\end{Bmatrix} 
+	= \py{m2ltx(D*1e3,style='Bmatrix')}	~\mathrm{[mrad]}
+\end{equation}
+
+\textbf{Step 9:} Member forces:
+
+Using the special matrix since there is no vertical force and no
+vertical displacement for this special case.
+
+For Member \emph{CD}:
+\begin{equation*}
+	\begin{Bmatrix}
+	T_C \\ M_C \\ T_D \\ M_D
+	\end{Bmatrix} 
+	= 10^{3} 
+	\py{m2ltx(eleK(grid))}
+	\py{m2ltx(d_CD(D*1e3),style='Bmatrix')}
+	= 
+	\py{m2ltx(Fcd,style='Bmatrix')}
+	~\mathrm{[kNm]}
+\end{equation*}
+
+For Member \emph{CF} we consider not using the lower number node as the $i$ node to illustrate the coordinate transform that must be considered. In this case, since the local $z$-axis and gloabl $Y$-axis are parallel, positive $\theta$ become positive major axis bending in the member's local coordinate system:
+
+\begin{equation*}
+	\begin{Bmatrix}
+		T_C \\ M_C \\ T_F \\ M_F
+	\end{Bmatrix} 
+	= 10^{3} 
+	\py{m2ltx(eleK(grid))}
+	\py{m2ltx(d_FC(D*1e3),style='Bmatrix')}
+	= 
+	\py{m2ltx(Fcf,style='Bmatrix')}
+	~\mathrm{[kNm]}
+\end{equation*}
+
+
+For Member \emph{CE}:
+\begin{equation*}
+	\begin{Bmatrix}
+		T_C \\ M_C \\ T_E \\ M_E
+	\end{Bmatrix} 
+	= 10^{3} 
+	\py{m2ltx(eleK(grid))}
+	\py{m2ltx(d_CE(D*1e3),style='Bmatrix')}
+	= 
+	\py{m2ltx(Fce,style='Bmatrix')}
+	~\mathrm{[kNm]}
+\end{equation*}
+
+And finally, for Member \emph{CG}, we again break convention and carefully consider the directions of the global displacements as they relate to the local member coordinate system.
+
+\begin{equation*}
+	\begin{Bmatrix}
+		T_G \\ M_G \\ T_C \\ M_C
+	\end{Bmatrix} 
+	= 10^{3} 
+	\py{m2ltx(eleK(grid))}
+	\py{m2ltx(d_GC(D*1e3),style='Bmatrix')}
+	= 
+	\py{m2ltx(Fgc,style='Bmatrix')}
+	~\mathrm{[kNm]}
+\end{equation*}
+
+\textbf{Step 10} is to draw the internal actions diagrams. To do this, the results of the member actions which were derived in the local member coordinate system must now be considered now in the global coordinate system. The easiest way to do this is to draw the directions by carefully interpreting the member force signs against the global axis system. The resulting FBD is shown in \Cref{fig:fbd}.
+
+\begin{figure}[!htb]
+	\centering
+	
+	\begin{pysub}
+		\setcoords{-25}{30}[1][1] 
+		\setaxis{2} 
+		\begin{adjustbox}{max width=\textwidth}
+			\begin{tikzpicture}[coords] 
+			\dscaling{1}{1.5};
+			
+			\dpoint{c}{0}{0}{0}; 
+			\dpoint{d}{ -!{L} }{0}{0};
+			\dpoint{e}{0}{ !{L} }{0}; 
+			\dpoint{f}{ !{L} }{0}{0};
+			\dpoint{g}{0}{-!{L} }{0}; 
+			\dpoint{z}{ -!{0.7*L} }{ -!{0.7*L} }{0}; 
+			
+			\daxis{1}{z}; 
+			
+			\dbeam{1}{c}{d};
+			\dbeam{1}{c}{e};
+			\dbeam{1}{c}{f};
+			\dbeam{1}{c}{g};
+			
+			\support{1}{d}; \hinge{1}{d}
+			\support{3}{e}[90];
+			\support{1}{f}; \hinge{1}{f}
+			\support{3}{g}[270];
+
+			\begin{scope}[force/.append style={color=red,>={Latex[length=0pt 5]}},
+			normalLine/.append style={line width=1mm}]
+				
+				\dload{4}{c}[90][-90][ !{L/3} ];
+				\dnotation{1}{c}{$!{n(abs(Fcg[0]))}$}[left=5mm];
+
+				\dload{3}{c}[270][-90][ !{L/3} ];
+				\dnotation{1}{c}{$!{n(abs(Fce[0]))}$}[right=5mm];				
+				
+				\dpoint{cd}{-!{L/6}}{0}{0}
+				\dload{4}{cd}[90][-90][ !{L/3} ];
+				\dnotation{1}{cd}{$!{n(abs(Fcd[1]))}$}[left=5mm];
+
+				\dpoint{cf}{!{L/6}}{0}{0}
+				\dload{4}{cf}[90][-90][ !{L/3} ];
+				\dnotation{1}{cf}{$!{n(abs(Fcf[1]))}$}[below=5mm];
+				
+				\dload{4}{g}[270][-90][ !{L/3} ];
+				\dnotation{1}{g}{$!{n(abs(Fcg[2]))}$}[right=5mm];
+
+				\dload{3}{e}[90][-90][ !{L/3} ];
+				\dnotation{1}{e}{$!{n(abs(Fce[2]))}$}[left=5mm];	
+				
+			\end{scope}
+			
+			\dnotation{1}{c}{$C$}[above=2mm];
+			\dnotation{1}{d}{$D$}[above right];
+			\dnotation{1}{e}{$E$}[above left];
+			\dnotation{1}{f}{$F$}[above right];
+			\dnotation{1}{g}{$G$}[below right];
+			
+			\end{tikzpicture}
+		\end{adjustbox}
+	\end{pysub}
+	\caption{Free body diagram.}
+	\label{fig:fbd}
+\end{figure}
+
+Considering the BMD, for each member, to identify the side in tension it can help to visualise the deformation resulting from the forces acting on it indicated in the free body diagram, \Cref{fig:fbd}. Since there are no loads acting between the nodes, the BMD is comprised of straight lines between the values at each node. The BMD is shown in \Cref{fig:bmd}.
+
+\begin{figure}[ht]
+	\centering
+	
+	\begin{pysub}
+		\setcoords{-25}{30}[1][1][1] 
+		\setaxis{2} 
+		\begin{adjustbox}{max width=\textwidth}
+			\begin{tikzpicture}[coords] 
+			\dscaling{1}{1.5};
+			
+			\dpoint{c}{0}{0}{0}; 
+			\dpoint{d}{ -!{L} }{0}{0};
+			\dpoint{e}{0}{ !{L} }{0}; 
+			\dpoint{f}{ !{L} }{0}{0};
+			\dpoint{g}{0}{-!{L} }{0}; 
+			\dpoint{z}{ -!{0.7*L} }{ -!{0.7*L} }{0}; 
+			
+			\daxis{1}{z}; 
+			
+			\dbeam{1}{c}{d};
+			\dbeam{1}{c}{e};
+			\dbeam{1}{c}{f};
+			\dbeam{1}{c}{g};
+			
+			\support{1}{d};  \hinge{1}{d}
+			\support{3}{e}[90];
+			\support{1}{f};  \hinge{1}{f}
+			\support{3}{g}[270];
+			
+			\dinternalforces{xz}{c}{d}{ !{int(Fcd[1]/bmd_scale)} }{ !{int(Fcd[3]/bmd_scale)} };
+			\dinternalforces{xz}{c}{e}{ !{int(Fce[1]/bmd_scale)} }{ !{int(Fce[3]/bmd_scale)} };
+			\dinternalforces{xz}{c}{f}{ !{int(Fcf[1]/bmd_scale)} }{ !{int(Fcf[3]/bmd_scale)} };
+			\dinternalforces{xz}{c}{g}{ !{int(Fcg[1]/bmd_scale)} }{ !{int(Fcg[3]/bmd_scale)} };
+			
+			\dnotation{1}{c}{$!{n(abs(Fcd[1]))}$}[below right=18mm and 0mm of c];
+			\dnotation{1}{c}{$!{n(abs(Fcf[1]))}$}[above left=18mm and 0mm of c];
+			
+			\dnotation{1}{c}{$C$}[right=3mm];
+			\dnotation{1}{d}{$D$}[above right];
+			\dnotation{1}{e}{$E$}[above left];
+			\dnotation{1}{f}{$F$}[above right];
+			\dnotation{1}{g}{$G$}[below right];
+			
+			\end{tikzpicture}
+		\end{adjustbox}
+	\end{pysub}
+	\caption{Bending Moment Diagram.}
+	\label{fig:bmd}
+\end{figure}
+
+For the TMD, it is not necessary to adopt a strict drawing convention once the relative actions are indicated. For example, the double-headed arrow in \Cref{fig:fbd} indicating the torsion of member $CE$ could be thought of as an analogous ``tension'' which we may consider as positive, and so we draw the TMD above the line. Similarly, fr member $CG$, the double-headed arrows act in the opposite sense to the analogous ``tension'' and so are analogous to ``compression'', which we then draw on the bottom of the member, as shown in \Cref{fig:tmd}.
+
+\begin{figure}[ht]
+	\centering
+	
+	\begin{pysub}
+		\setcoords{-25}{30}[1][1][1] 
+		\setaxis{2} 
+		\begin{adjustbox}{max width=\textwidth}
+			\begin{tikzpicture}[coords] 
+			\dscaling{1}{1.5};
+			
+			\dpoint{c}{0}{0}{0}; 
+			\dpoint{d}{ -!{L} }{0}{0};
+			\dpoint{e}{0}{ !{L} }{0}; 
+			\dpoint{f}{ !{L} }{0}{0};
+			\dpoint{g}{0}{-!{L} }{0}; 
+			\dpoint{z}{ -!{0.7*L} }{ -!{0.7*L} }{0}; 
+			
+			\daxis{1}{z}; 
+			
+			\dbeam{1}{c}{d};
+			\dbeam{1}{c}{e};
+			\dbeam{1}{c}{f};
+			\dbeam{1}{c}{g};
+			
+			\support{1}{d};  \hinge{1}{d}
+			\support{3}{e}[90];
+			\support{1}{f};  \hinge{1}{f}
+			\support{3}{g}[270];
+			
+			\dinternalforces{yz}{c}{d}{ !{int(Fcd[0]/tmd_scale)} }{ !{int(-Fcd[2]/tmd_scale)} };
+			\dinternalforces{yz}{c}{e}{ !{int(Fce[0]/tmd_scale)} }{ !{int(-Fce[2]/tmd_scale)} };
+			\dinternalforces{yz}{c}{f}{ !{int(Fcf[0]/tmd_scale)} }{ !{int(-Fcf[2]/tmd_scale)} };
+			\dinternalforces{yz}{c}{g}{ !{int(Fcg[0]/tmd_scale)} }{ !{int(-Fcg[2]/tmd_scale)} };
+			
+			\dnotation{1}{c}{$!{n(abs(Fce[0]))}$}[below=12mm];
+			\dnotation{1}{e}{$!{n(abs(Fce[2]))}$}[above=12mm];
+			\dnotation{1}{c}{$!{n(abs(Fcg[0]))}$}[above=12mm];
+			\dnotation{1}{g}{$!{n(abs(Fcg[2]))}$}[below=12mm];
+			
+			\dnotation{1}{c}{$C$}[right=3mm];
+			\dnotation{1}{d}{$D$}[above right];
+			\dnotation{1}{e}{$E$}[above left];
+			\dnotation{1}{f}{$F$}[above right];
+			\dnotation{1}{g}{$G$}[below right];
+			
+			\end{tikzpicture}
+		\end{adjustbox}
+	\end{pysub}
+	\caption{Torsion Moment Diagram.}
+	\label{fig:tmd}
+\end{figure}
+
+\end{hidden}
+\end{document}
